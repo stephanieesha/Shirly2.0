@@ -81,12 +81,13 @@ function ShoppingListDetails(){
      listNames.map((x) => {
         listNameArray.push(x.ItemName)
     })
-
     const existingListNameArray = []
+    
     listNames.map((x) => {
         existingListNameArray.push(x)
     })
   
+    console.log(existingListNameArray)
     const selectListName = (e) => {
         setNewListName(e.target.value)
     } 

@@ -1,71 +1,46 @@
 import axios from 'axios'
 
-const API_URL = '/api/listName/'
+const API_URL = '/api/lists/'
 
+const getAuthHeader = (token) => ({
+  headers: { Authorization: `Bearer ${token}` },
+})
+
+const getListNames = async (token) => {
+  const response = await axios.get(API_URL, getAuthHeader(token))
+  return response.data
+}
+
+const getDeletedListNames = async (token) => {
+  const response = await axios.get(API_URL + 'bin', getAuthHeader(token))
+  return response.data
+}
 
 const createListName = async (listNameData, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-
-  const response = await axios.post(API_URL, listNameData, config)
-    return response.data
-  }
-
-const getListNames = async ( token, user_id) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-  const response = await axios.get(API_URL, config)
-    return response.data
-  }
-
-const getListName = async (listNameId, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-  const response = await axios.get(API_URL + listNameId, config)
+  const response = await axios.post(API_URL, listNameData, getAuthHeader(token))
   return response.data
 }
 
-const updateListName = async (listNameData, listItemId, token) => {
-  axios({
-    method: 'put',
-    url: API_URL+ listItemId,
-    data: listNameData,
-    headers: {
-          Authorization: `Bearer ${token}`,
-        },
-  }).then((response) => {
-    console.log(response);
-  })
-
-}
-
-const deleteListName = async (listNameId, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-
-  const response = await axios.delete(API_URL+ listNameId , config)
-
+const updateListName = async (id, listNameData, token) => {
+  const response = await axios.put(API_URL + id, listNameData, getAuthHeader(token))
   return response.data
 }
 
-const listNameService = {
-    createListName,
-    getListNames,
-    getListName,
-    updateListName,
-    deleteListName
+const deleteListName = async (id, token) => {
+  const response = await axios.delete(API_URL + id, getAuthHeader(token))
+  return response.data
 }
+
+const restoreListName = async (id, token) => {
+  const response = await axios.patch(API_URL + id + '/restore', {}, getAuthHeader(token))
+  return response.data
+}
+
+const permanentlyDeleteListName = async (id, token) => {
+  const response = await axios.delete(API_URL + id + '/permanent', getAuthHeader(token))
+  return response.data
+}
+
+const listNameService = { getListNames, getDeletedListNames, createListName, updateListName, deleteListName, restoreListName, permanentlyDeleteListName }
 
 export default listNameService

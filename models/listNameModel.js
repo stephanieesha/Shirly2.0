@@ -9,26 +9,11 @@ const listNameSchema = mongoose.Schema(
     },
     name: {
       type: String,
+      required: [true, 'Please add a category name'],
       trim: true,
-      default: '',
-    },
-    ItemName: {
-      type: String,
-      trim: true,
-      default: '',
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }
 )
-
-listNameSchema.virtual('displayName').get(function () {
-  return this.name || this.ItemName || ''
-})
-
-listNameSchema.set('toJSON', { virtuals: true })
 
 module.exports = mongoose.model('ListName', listNameSchema)

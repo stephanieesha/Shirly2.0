@@ -1,20 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const {getListNames, getListName, createListName, deleteListName, updateListName, geAlltListNames} = require('../controller/listController')
+const { getListNames, getDeletedListNames, createListName, updateListName, deleteListName, restoreListName, permanentlyDeleteListName } = require('../controllers/listNameController')
+const { protect } = require('../middleware/authMiddleware')
 
-const {protect} = require('../middleware/authMiddleware')
-const listRouters = require('./listRoutes')
-router.use('/:listNameId/lists', listRouters)
+router.use(protect)
 
-router.route('/').get(protect, getListNames).post(protect, createListName)
-router
-    .route('/:id')
-    .get(protect, getListName)
-    .delete(protect, deleteListName)
-    .put(protect, updateListName)
-router.route('/:id/listsItems').get(protect, geAlltListNames)
-
-
-
+router.route('/').get(getListNames).post(createListName)
+router.route('/bin').get(getDeletedListNames)
+router.route('/:id').put(updateListName).delete(deleteListName)
+router.route('/:id/restore').patch(restoreListName)
+router.route('/:id/permanent').delete(permanentlyDeleteListName)
 
 module.exports = router

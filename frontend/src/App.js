@@ -1,64 +1,45 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Header from './components/Header'
-//import HomePage from "./pages/ListNamePage";
-import ListNamePage from "./pages/ListNamePage"
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from './pages/RegisterPage';
-import NewList from './pages/NewList';
-import PrivateRoute from './components/PrivateRoute';
-import ShoppingListDetails from './components/ShoppingListDetails';
-import ListItemPage from './pages/ListItemPage';
-import ShoppingHistory from './pages/ShoppingHistory';
-import HomePage from './pages/HomePage';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useSelector } from 'react-redux'
+import LoginPage from './pages/LoginPage'
+import DashboardPage from './pages/DashboardPage'
+import ListsPage from './pages/ListsPage'
+import ItemsPage from './pages/ItemsPage'
+import ItemDetailPage from './pages/ItemDetailPage'
+import ShoppingListPage from './pages/ShoppingListPage'
+import CategoryBinPage from './pages/CategoryBinPage'
+import ItemBinPage from './pages/ItemBinPage'
 
+function PrivateRoute({ children }) {
+  const { user } = useSelector((state) => state.auth)
+  return user ? children : <Navigate to='/login' />
+}
 
 function App() {
   return (
     <>
       <Router>
-        <div className='container'>
-          <Header/>
-          <Routes>
-            {/* <Route path='/' element = {<HomePage/>}/>
-            <Route path='/listNameId' element = {<PrivateRoute/>}>
-              <Route path='/listnames/:id' element= {<NewList/>}/>
-            </Route>
-            <Route path='/login' element = {<LoginPage/>}/>
-            <Route path='/register' element = {<RegisterPage/>}/> */}
-
-            {/* <Route path='/' element = {<HomePage/>}/>
-            <Route path='/listName/:listNameId/' element = {<NewList/>}/>
-            <Route path='/login' element = {<LoginPage/>}/>
-            <Route path='/NewList' element = {<NewList/>}/>
-            <Route path='/register' element = {<RegisterPage/>}/>
-            <Route path='/shoppingHistory' element = {<ShoppingHistory/>}/>
-            <Route path='/shoppingListDetails' element = {<ShoppingListDetails/>}/> */}
-            {/* <Route
-              path='/new-ticket'
-              element={
-                <PrivateRoute>
-                  <NewTicket />
-                </PrivateRoute>
-              }
-            /> */}
-            <Route path='/' element = {<HomePage/>}/>
-            <Route path='/listName' element = {<ListNamePage/>}/>
-            <Route path='/listName/:listNameId/' element = {<NewList/>}/>
-            <Route path='/login' element = {<LoginPage/>}/>
-            <Route path='/NewList' element = {<NewList/>}/>
-            <Route path='/register' element = {<RegisterPage/>}/>
-            <Route path='/shoppingHistory' element = {<ShoppingHistory/>}/>
-            <Route path='/shoppingListDetails' element = {<ShoppingListDetails/>}/>
-            <Route path='/:listNameId/lists/:listItemId' element = {<ListItemPage/>}/>
-          </Routes>
-        </div>
+        <Routes>
+          <Route path='/' element={<Navigate to='/login' />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/dashboard' element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+          <Route path='/lists' element={<PrivateRoute><ListsPage /></PrivateRoute>} />
+          <Route path='/lists/:listId' element={<PrivateRoute><ListsPage /></PrivateRoute>} />
+          <Route path='/lists/:listId/items' element={<PrivateRoute><ItemsPage /></PrivateRoute>} />
+          <Route path='/items/:itemId' element={<PrivateRoute><ItemDetailPage /></PrivateRoute>} />
+          <Route path='/shopping' element={<PrivateRoute><ShoppingListPage /></PrivateRoute>} />
+          <Route path='/lists/bin' element={<PrivateRoute><CategoryBinPage /></PrivateRoute>} />
+          <Route path='/lists/:listId/bin' element={<PrivateRoute><ItemBinPage /></PrivateRoute>} />
+        </Routes>
       </Router>
-      <ToastContainer />
+      <ToastContainer
+        position='top-right'
+        autoClose={3000}
+        toastStyle={{ background: '#3D2B1F', color: '#FAF0E4' }}
+      />
     </>
-  );
+  )
 }
 
-export default App;
+export default App
