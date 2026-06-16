@@ -45,11 +45,6 @@
   "overrides": {
     "react-number-format": {
       "react": "$react"
-    },
-      "recharts": {
-    "react": "$react",
-    "react-dom": "$react-dom"
-  }
   },
   "scripts": {
     "start": "react-scripts start",
