@@ -45,6 +45,7 @@
   "overrides": {
     "react-number-format": {
       "react": "$react"
+    }
   },
   "scripts": {
     "start": "react-scripts start",
