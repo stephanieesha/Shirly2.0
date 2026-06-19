@@ -158,7 +158,7 @@ const getListName = asyncHandler(async(req, res) => {
 //post request
 const createListName = asyncHandler(async(req, res) => {
     const listName = await ListName.create({
-        ItemName:_.startCase(req.body.ItemName),
+        name: _.startCase(req.body.name),
         user: req.user.id,
     })
     res.status(201).json(listName)
@@ -176,8 +176,8 @@ const deleteListName = asyncHandler(async(req, res) => {
 const updateListName = asyncHandler(async(req, res) => {
     const updatedItem = await ListName.findByIdAndUpdate(
         req.params.id, 
-        {ItemName:_.startCase(req.body.ItemName)},
-        {new: true})
+        { name: _.startCase(req.body.name) },
+        { new: true })
     res.status(200).json(updatedItem)
 })
 
