@@ -117,7 +117,13 @@ const listNameSlice = createSlice({
       })
       .addCase(createListName.fulfilled, (state, action) => {
         state.isSuccess = true
-        state.listNames.unshift(action.payload)
+        if (action.payload && action.payload._id) {
+          state.listNames.unshift(action.payload)
+        }
+      })
+      .addCase(createListName.rejected, (state, action) => {
+        state.isError = true
+        state.message = action.payload
       })
       .addCase(updateListName.fulfilled, (state, action) => {
         state.isSuccess = true
