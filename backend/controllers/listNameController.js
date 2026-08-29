@@ -32,7 +32,13 @@ const createListName = asyncHandler(async (req, res) => {
     throw new Error('Please add a category name')
   }
   const listName = await ListName.create({ user: req.user._id, name })
-  res.status(201).json(listName)
+  res.status(201).json({
+    _id: listName._id,
+    user: listName.user,
+    name: listName.name || listName.ItemName || '',
+    createdAt: listName.createdAt,
+    updatedAt: listName.updatedAt,
+  })
 })
 
 const updateListName = asyncHandler(async (req, res) => {
