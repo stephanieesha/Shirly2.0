@@ -108,6 +108,8 @@ const buyItem = asyncHandler(async (req, res) => {
   item.totalSpent = (item.totalSpent || 0) + price
   // Assumption: buying an item adds the bought quantity to its stock
   item.stock = (item.stock || 0) + (Number(quantity) || 0)
+  // Record the purchase so the shopping list knows when it was last bought
+  item.boughtAt.unshift(snapshot)
   await item.save()
   res.json(item)
 })
