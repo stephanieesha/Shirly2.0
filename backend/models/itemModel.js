@@ -37,6 +37,7 @@ const itemSchema = mongoose.Schema(
     comment: { type: String, default: '' },
     totalSpent: { type: Number, default: 0 },
     boughtAt: { type: [purchaseSnapshotSchema], default: [] },
+    stock: { type: Number, default: 0, min: 0 },
     shoppingInProgress: { type: Boolean, default: false },
     itemDisabled: { type: Boolean, default: false },
   },

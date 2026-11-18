@@ -10,6 +10,7 @@ import ItemDetailPage from './pages/ItemDetailPage'
 import ShoppingListPage from './pages/ShoppingListPage'
 import CategoryBinPage from './pages/CategoryBinPage'
 import ItemBinPage from './pages/ItemBinPage'
+import InventoryPage from './pages/InventoryPage'
 import ErrorBoundary from './components/ErrorBoundary'
 
 function PrivateRoute({ children }) {
@@ -30,6 +31,7 @@ function App() {
             <Route path='/lists/:listId' element={<PrivateRoute><ListsPage /></PrivateRoute>} />
             <Route path='/lists/:listId/items' element={<PrivateRoute><ItemsPage /></PrivateRoute>} />
             <Route path='/items/:itemId' element={<PrivateRoute><ItemDetailPage /></PrivateRoute>} />
+            <Route path='/inventory' element={<PrivateRoute><InventoryPage /></PrivateRoute>} />
             <Route path='/shopping' element={<PrivateRoute><ShoppingListPage /></PrivateRoute>} />
             <Route path='/lists/bin' element={<PrivateRoute><CategoryBinPage /></PrivateRoute>} />
             <Route path='/lists/:listId/bin' element={<PrivateRoute><ItemBinPage /></PrivateRoute>} />

@@ -122,6 +122,16 @@ export const generateShoppingList = createAsyncThunk('items/generate', async (_,
   }
 })
 
+export const setStock = createAsyncThunk('items/setStock', async ({ id, stock }, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await itemService.setStock(id, stock, token)
+  } catch (error) {
+    const message = error.response?.data?.message || error.message
+    return thunkAPI.rejectWithValue(message)
+  }
+})
+
 const itemSlice = createSlice({
   name: 'items',
   initialState,
@@ -166,6 +176,11 @@ const itemSlice = createSlice({
       })
       .addCase(buyItem.fulfilled, (state, action) => {
         state.isSuccess = true
+        state.items = state.items.map((i) =>
+          i._id === action.payload._id ? action.payload : i
+        )
+      })
+      .addCase(setStock.fulfilled, (state, action) => {
         state.items = state.items.map((i) =>
           i._id === action.payload._id ? action.payload : i
         )
