@@ -15,6 +15,7 @@ function DashboardPage() {
   const { shoppingList, isLoading } = useSelector((state) => state.items)
   const [checkedItems, setCheckedItems] = useState({})
   const [search, setSearch] = useState('')
+  const [suggestedOpen, setSuggestedOpen] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
@@ -173,12 +174,24 @@ function DashboardPage() {
           </div>
           <div style={s.listCard}>
             <div style={s.listHead}>
-              <span style={s.listTitle}>Suggested for you</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <button
+                  style={s.collapseBtn}
+                  onClick={() => setSuggestedOpen(!suggestedOpen)}
+                  aria-expanded={suggestedOpen}
+                  aria-label={suggestedOpen ? 'Collapse suggested items' : 'Expand suggested items'}
+                >
+                  {suggestedOpen ? '▾' : '▸'}
+                </button>
+                <span style={s.listTitle}>Suggested for you</span>
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={s.badge}>{shoppingList.length} items · ₦{totalSpend.toLocaleString()} est.</span>
                 <button style={s.goShopBtn} onClick={() => navigate('/shopping')}>Start →</button>
               </div>
             </div>
+            {suggestedOpen && (
+            <>
             <div style={{ padding: '10px 16px', borderBottom: '0.5px solid #EDE0D0', position: 'relative' }}>
               <input
                 style={{ width: '100%', padding: '8px 36px 8px 12px', border: '0.5px solid #D4C4B0', borderRadius: '8px', fontSize: '13px', color: '#2A1E14', background: '#FDFAF7', fontFamily: 'sans-serif', boxSizing: 'border-box' }}
@@ -231,6 +244,8 @@ function DashboardPage() {
               </span>
               <span style={s.footVal}>₦{uncheckedTotal.toLocaleString()}</span>
             </div>
+            </>
+            )}
           </div>
         </div>
 
@@ -286,6 +301,7 @@ const s = {
   listCard: { background: '#fff', border: '0.5px solid #E2D5C3', borderRadius: '14px', overflow: 'hidden' },
   listHead: { padding: '13px 16px', borderBottom: '0.5px solid #EDE0D0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   listTitle: { fontSize: '14px', fontWeight: '500', color: '#2A1E14' },
+  collapseBtn: { background: 'none', border: 'none', color: '#9C7E6A', fontSize: '14px', cursor: 'pointer', padding: '0 4px', lineHeight: 1 },
   badge: { fontSize: '11px', fontWeight: '500', padding: '3px 10px', borderRadius: '999px', background: '#EEE4D4', color: '#5A3E28' },
   listItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 16px', borderBottom: '0.5px solid #F5EDE0', cursor: 'pointer', transition: 'opacity 0.15s' },
   itemL: { display: 'flex', alignItems: 'center', gap: '10px' },
