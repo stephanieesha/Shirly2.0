@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -60,17 +60,26 @@ function InventoryPage() {
     return sorted
   }, [safeItems, search, listFilter, stockFilter, sortMode, listNameById])
 
-  // Group headers only when sorting by list
-  const groups = useMemo(() => {
-    if (sortMode !== 'list') return null
-    const result = []
-    visibleItems.forEach((item) => {
-      const label = listNameById[item.listName] || 'Uncategorised'
-      const last = result[result.length - 1]
-      if (last && last.label === label) last.items.push(item)
-      else result.push({ label, items: [item] })
-    })
-    return result
+  // In-stock items always sit above out-of-stock items, so checking
+  // a count up or down moves the row between the two sections.
+  const sections = useMemo(() => {
+    const groupByList = (rows) => {
+      if (sortMode !== 'list') return [{ label: null, items: rows }]
+      const result = []
+      rows.forEach((item) => {
+        const label = listNameById[item.listName] || 'Uncategorised'
+        const last = result[result.length - 1]
+        if (last && last.label === label) last.items.push(item)
+        else result.push({ label, items: [item] })
+      })
+      return result
+    }
+    const inStock = visibleItems.filter((i) => (i.stock || 0) > 0)
+    const outOfStock = visibleItems.filter((i) => (i.stock || 0) <= 0)
+    return [
+      { title: 'In stock', items: inStock, groups: groupByList(inStock) },
+      { title: 'Out of stock', items: outOfStock, groups: groupByList(outOfStock) },
+    ].filter((sec) => sec.items.length > 0)
   }, [visibleItems, sortMode, listNameById])
 
   const inStockCount = safeItems.filter((i) => (i.stock || 0) > 0).length
@@ -166,16 +175,17 @@ function InventoryPage() {
           <div style={s.tableWrap}>
             <table style={s.table}>
               {tableHead}
-              {groups ? (
-                groups.map((group) => (
-                  <tbody key={group.label}>
-                    <tr><td colSpan={3} style={s.groupHeader}>{group.label} · {group.items.length}</td></tr>
-                    {group.items.map(renderRow)}
-                  </tbody>
-                ))
-              ) : (
-                <tbody>{visibleItems.map(renderRow)}</tbody>
-              )}
+              {sections.map((section) => (
+                <tbody key={section.title}>
+                  <tr><td colSpan={3} style={s.groupHeader}>{section.title} · {section.items.length}</td></tr>
+                  {section.groups.map((group) => (
+                    <Fragment key={group.label || 'all'}>
+                      {group.label && <tr><td colSpan={3} style={s.subHeader}>{group.label}</td></tr>}
+                      {group.items.map(renderRow)}
+                    </Fragment>
+                  ))}
+                </tbody>
+              ))}
             </table>
           </div>
         )}
@@ -202,6 +212,7 @@ const s = {
   theadRow: { background: '#F7F0E6' },
   th: { textAlign: 'left', padding: '9px 14px', fontSize: '11px', fontWeight: '500', color: '#9C7E6A', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' },
   groupHeader: { padding: '10px 14px', background: '#F7F0E6', fontFamily: 'Georgia, serif', fontWeight: '600', color: '#3D2B1F', borderTop: '0.5px solid #E2D5C3' },
+  subHeader: { padding: '8px 14px', fontSize: '12px', color: '#9C7E6A', background: '#FDFAF7', borderTop: '0.5px solid #E2D5C3' },
   tbodyRow: { borderTop: '0.5px solid #E2D5C3' },
   td: { padding: '10px 14px', color: '#2A1E14', verticalAlign: 'middle' },
   muted: { color: '#9C7E6A' },
