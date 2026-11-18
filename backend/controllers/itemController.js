@@ -106,6 +106,8 @@ const buyItem = asyncHandler(async (req, res) => {
   item.frequency = frequency
   item.comment   = comment
   item.totalSpent = (item.totalSpent || 0) + price
+  // Assumption: buying an item adds the bought quantity to its stock
+  item.stock = (item.stock || 0) + (Number(quantity) || 0)
   await item.save()
   res.json(item)
 })
@@ -123,6 +125,22 @@ const skipItem = asyncHandler(async (req, res) => {
   }
   item.boughtAt.unshift(snapshot)
   // totalSpent is NOT updated for skipped items
+  await item.save()
+  res.json(item)
+})
+
+const setStock = asyncHandler(async (req, res) => {
+  const item = await Item.findById(req.params.id)
+  if (!item) { res.status(404); throw new Error('Item not found') }
+  if (item.user.toString() !== req.user._id.toString()) {
+    res.status(403); throw new Error('Not authorised')
+  }
+  const { stock } = req.body
+  const value = Number(stock)
+  if (!Number.isInteger(value) || value < 0) {
+    res.status(400); throw new Error('stock must be a whole number, 0 or more')
+  }
+  item.stock = value
   await item.save()
   res.json(item)
 })
@@ -213,4 +231,4 @@ const generateShoppingList = asyncHandler(async (req, res) => {
   res.json(due)
 })
 
-module.exports = { getItems, getItem, createItem, updateItem, buyItem, deleteItem, generateShoppingList,skipItem, enableItem, disableItem, permanentlyDeleteItem }
+module.exports = { getItems, getItem, createItem, updateItem, buyItem, setStock, deleteItem, generateShoppingList,skipItem, enableItem, disableItem, permanentlyDeleteItem }

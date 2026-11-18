@@ -91,6 +91,7 @@ function ListsPage() {
           <button style={s.addBtn} onClick={() => setShowInput(!showInput)}>
             {showInput ? 'Cancel' : '+ New category'}
           </button>
+          <button style={s.binBtn} onClick={() => navigate('/inventory')}>📦 Inventory</button>
           <button style={s.binBtn} onClick={() => navigate('/lists/bin')}>🗑️ Bin</button>
         </div>
 

@@ -7,8 +7,10 @@ const getAuthHeader = (token) => ({
 })
 
 const getItems = async ({ listId, includeDisabled } = {}, token) => {
-  let url = API_URL + '?listId=' + listId
-  if (includeDisabled) url += '&includeDisabled=true'
+  const params = []
+  if (listId) params.push('listId=' + listId)
+  if (includeDisabled) params.push('includeDisabled=true')
+  const url = API_URL + (params.length ? '?' + params.join('&') : '')
   const response = await axios.get(url, getAuthHeader(token))
   return response.data
 }
@@ -58,6 +60,11 @@ const generateShoppingList = async (token) => {
   return response.data
 }
 
+const setStock = async (id, stock, token) => {
+  const response = await axios.patch(API_URL + id + '/stock', { stock }, getAuthHeader(token))
+  return response.data
+}
+
 const permanentlyDeleteItem = async (id, token) => {
   const response = await axios.delete(API_URL + id + '/permanent', getAuthHeader(token))
   return response.data
@@ -67,7 +74,7 @@ const itemService = {
   getItems, getItem, createItem, updateItem,
   buyItem, skipItem, disableItem, enableItem,
   deleteItem, generateShoppingList,
-  permanentlyDeleteItem
+  permanentlyDeleteItem, setStock
 }
 
 export default itemService

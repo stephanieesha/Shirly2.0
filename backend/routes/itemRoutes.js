@@ -3,7 +3,7 @@ const router = express.Router()
 const {
   getItems, getItem, createItem, updateItem, buyItem,
   deleteItem, generateShoppingList, skipItem, disableItem, enableItem,
-  permanentlyDeleteItem
+  permanentlyDeleteItem, setStock
 } = require('../controllers/itemController')
 const { protect } = require('../middleware/authMiddleware')
 
@@ -16,6 +16,7 @@ router.post('/:id/buy', buyItem)
 router.post('/:id/skip', skipItem)
 router.patch('/:id/disable', disableItem)
 router.patch('/:id/enable', enableItem)
+router.patch('/:id/stock', setStock)
 router.delete('/:id/permanent', permanentlyDeleteItem)
 
 module.exports = router
