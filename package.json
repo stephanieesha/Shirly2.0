@@ -8,7 +8,8 @@
     "server": "nodemon backend/server.js",
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm i && cd frontend && npm i && npm run build"
+    "build": "npm i && cd frontend && npm i && npm run build",
+    "test": "node --test backend/tests/*.test.js"
   },
   "author": "Esha",
   "license": "MIT",
@@ -29,6 +30,7 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.8.0",
     "mongoose": "^8.4.4",
+    "multer": "^2.5.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "proxy": "^2.2.0",
