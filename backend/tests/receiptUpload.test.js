@@ -34,7 +34,7 @@ for (const [label, bytes, mediaType] of [['JPEG', files.jpeg, 'image/jpeg'], ['P
     const { status, body } = await upload(app, { bytes, type: mediaType })
     assert.equal(status, 201)
     assert.equal(body.receipt.mediaType, mediaType)
-    assert.equal(body.receipt.status, 'uploaded')
+    assert.equal(body.receipt.status, 'read')
     assert.equal(body.receipt.sizeBytes, bytes.length)
     assert.equal(receipts.rows.length, 1)
     assert.equal(String(receipts.rows[0].user), 'ada')

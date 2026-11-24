@@ -50,6 +50,33 @@ class FakeReceipts {
   }
 }
 
+// Just enough of the items model: the person's own items, with the switched-off ones filtered out.
+class FakeItems {
+  constructor(rows = []) {
+    this.rows = rows
+    this.queries = []
+  }
+
+  async find(query) {
+    this.queries.push(query)
+    return this.rows.filter((row) =>
+      String(row.user) === String(query.user) &&
+      (query.itemDisabled === undefined || Boolean(row.itemDisabled) === query.itemDisabled))
+  }
+}
+
+// What the AI reader returns by default: a small, valid receipt.
+const sampleReading = () => ({
+  looks_like_receipt: true,
+  store: 'Corner Shop',
+  date: '2026-11-23',
+  total: 8.5,
+  items: [
+    { name: 'Milk 1L', quantity: 1, price: 2.5 },
+    { name: 'Bread', quantity: 2, price: 6 },
+  ],
+})
+
 // The login check is replaced by a header, so a test can be "logged in" as any user.
 const fakeProtect = (calls = { count: 0 }) => (req, res, next) => {
   calls.count += 1
@@ -62,12 +89,14 @@ const fakeProtect = (calls = { count: 0 }) => (req, res, next) => {
   next()
 }
 
-const startApp = async ({ receipts, maxBytes, now, protectRoute, ...extra } = {}) => {
+const startApp = async ({ receipts, items = new FakeItems(), readReceipt = async () => sampleReading(), maxBytes, now, protectRoute, ...extra } = {}) => {
   const app = express()
   app.use(express.json())
   app.use('/api/receipts', createReceiptRouter({
     protectRoute: protectRoute || fakeProtect(),
     Receipt: receipts,
+    Item: items,
+    readReceipt,
     upload: createUploadReceipt({ maxBytes: maxBytes || 1024 * 1024 }),
     now,
     ...extra,
@@ -91,4 +120,4 @@ const upload = async (app, { bytes, name = 'receipt.jpg', type = 'image/jpeg', f
   return { status: response.status, body: await response.json() }
 }
 
-module.exports = { HOUR, files, FakeReceipts, fakeProtect, startApp, upload }
+module.exports = { HOUR, files, FakeReceipts, FakeItems, sampleReading, fakeProtect, startApp, upload }
